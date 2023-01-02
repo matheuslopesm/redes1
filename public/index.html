@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AltrString | Modificador de String</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;1,100;1,300;1,400;1,500&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <nav>
+        <h1>Atividade de Programação<br>Redes 1</h1>
+        <h4>Lucas Nunes Silveira | 20.2.8040<br>Matheus Lopes Moreira | 20.2.8002</h4>
+    </nav>
+
+    <form id="chat">
+        <input type="text" name="username" placeholder="Digite seu usuário">
+        <div class="messages"></div>
+        <input type="text" name="message" placeholder="Digite sua mensagem">
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script type="text/javascript">
+        var socket = io('http://localhost:3000');
+
+        function renderMessage(message) {
+            $('.messages').append('<div class="message"><strong>' + message.author + '</strong>: ' + message.message + '</div>');
+        }
+
+        socket.on('previousMessages', function (messages) {
+            for (message of messages) {
+                renderMessage(message);
+            }
+        })
+
+        socket.on('receivedMessage', function (message) {
+            renderMessage(message);
+        });
+
+        $('#chat').submit(function (event) {
+            event.preventDefault();
+
+            var author = $('input[name=username]').val();
+            var message = $('input[name=message]').val();
+
+            if (author.length && message.length) {
+                var messageObject = {
+                    author: author,
+                    message: message,
+                };
+
+                renderMessage(messageObject);
+
+                socket.emit('sendMessage', messageObject);
+            };
+        });
+    </script>
+</body>
+
+</html>
