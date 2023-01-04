@@ -19,7 +19,9 @@ app.use('/', (req, res) => {
     res.render('index.html');
 });
 
-let messages;
+var messages;
+var tamPalavra;
+var palavraInvertida;
 const vogais = ["a", "e", "i", "o", "u"];
 
 io.on('connection', socket => {
@@ -27,13 +29,8 @@ io.on('connection', socket => {
 
     socket.on('sendMessage', data => {
         messages = JSON.stringify(data.message);
-        let tamPalavra = messages.length - 2;
-
-        let palavraInvertida = messages.split("").reverse().join("");
-
-        console.log(messages);
-        console.log(palavraInvertida);
-        console.log(tamPalavra);
+        tamPalavra = messages.length - 2;
+        palavraInvertida = messages.split("").reverse().join("");
 
         function contaVogal(string) {
             let count = 0;
@@ -41,19 +38,24 @@ io.on('connection', socket => {
             for (let letra of string.toLowerCase()) {
                 if (vogais.includes(letra)) {
                     count++;
-                }
-            }
+                };
+            };
 
             return count;
-        }
+        };
 
-        let numVogais = contaVogal(messages);
-        let numConsoantes = tamPalavra - numVogais;
+        var numVogais = contaVogal(messages);
+        var numConsoantes = tamPalavra - numVogais;
 
-        console.log(numVogais, numConsoantes);
+        messages = {
+            palavraInvertida: palavraInvertida,
+            tamPalavra: tamPalavra,
+            numVogais: numVogais,
+            numConsoantes: numConsoantes,
+        };
 
-        socket.broadcast.emit('receivedMessage', messages);
-    });
+        socket.broadcast.emit('receivedMessage', messages.palavraInvertida);
+    }); 
 });
 
 server.listen(3000);

@@ -17,7 +17,7 @@ nav {
   justify-content: space-around;
   align-items: center;
 
-  height: 11rem;
+  height: 9rem;
   background-color: #069;
   color: #ffffff;
   text-align: left;
@@ -38,7 +38,7 @@ h4 {
   display: flex;
   align-items: center;
   flex-direction: column;
-  margin-top: 80px;
+  margin-top: 60px;
 }
 
 input {
@@ -50,24 +50,28 @@ input {
 }
 
 button {
-  width: 600px;
+  width: 197px;
   height: 50px;
   margin-bottom: 30px;
   font-size: 14px;
   background: #069;
   text-align: center;
-  line-height: 50px;
   font-weight: bold;
   color: #FFF;
+  border: none;
   margin-top: 10px;
 }
 
-.result-title {
+button:hover{
+  background: rgb(0, 65, 97);
+}
+
+.title {
   font-size: 1.5rem;
   margin: 0;
 }
 
-.string-result {
+.result-box {
   width: 600px;
   height: 200px;
   margin: 5px 0;

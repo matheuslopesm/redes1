@@ -25,40 +25,44 @@
         <h4>Lucas Nunes Silveira - 20.2.8040<br>Matheus Lopes Moreira - 20.2.8002</h4>
     </nav>
 
-    <form id="chat">
+    <div id="chat">
         <input type="text" name="string-to-transform" placeholder="Digite sua String">
-        <button type="submit">Enviar</button>
-        <h1 class="result-title">Resultados da sua String:</h1>
-        <div class="string-result"></div>
-    </form>
+        <div class="content">
+            <button id="invert-button">Inverter String</button>
+            <button id="number-letter">Número de Letras</button>
+            <button id="number-vowel-consonant">Vogais e Consoantes</button>
+        </div>
+        <h1 class="title">Resultado:</h1>
+        <div class="result-box"></div>
+    </div>
 
     <script type="text/javascript">
         var socket = io('http://localhost:3000');
 
-        function renderMessage(message) {
-            $('.string-result').append('<div class="string-transformed">' + message.message + '</div>');
-        }
-
-        socket.on('receivedMessage', function (message) {
-            renderMessage(message);
+        socket.on('receivedMessage', function (word) {
+            renderMessage(word);
         });
+          
+        function renderMessage(word) {
+            $('.result-box').append('<div class="string-transformed">' + word.word + '</div>');
+        };
 
-        $('#chat').submit(function (event) {
+        $('#invert-button').click(function (event) {
             event.preventDefault();
 
-            var message = $('input[name=string-to-transform]').val();
+            var word = $('input[name=string-to-transform]').val();
 
-            if (message.length) {
-                var messageObject = {
-                    message: message,
+            if (word.length) {
+                var wordObject = {
+                    word: word,
                 };
 
-                renderMessage(messageObject);
-
-                socket.emit('sendMessage', messageObject);
+                renderMessage(wordObject);
+                socket.emit('sendMessage', wordObject);
             };
+
+            // CONFERIR O FLUXO DO RENDERMESSAGE ETC.
         });
     </script>
 </body>
-
 </html>
