@@ -40,18 +40,13 @@
         var socket = io('http://localhost:3000');
 
         // Função: Inverter String
-        // 3) Cliente recebe a informação tratada e imprime na tela:
-        socket.on('receivedMessage', function (palavraInvertida) {
-            $('.result-box').append('<h1 class="string-inverted">' + palavraInvertida + '</div>');
+        socket.on('invertedMessage', function (invertedWord) {
+            $('.result-box').append('<h1 class="string-inverted">' + invertedWord + '</div>');
             $('.result-box').append(`<h1 class="reload-message">Deseja analisar outra String? Recarregue a página!</div>`);
         });
 
-        // 1) Cliente coleta e manda a informação pro Servidor:
         $('#invert-button').click(function (event) {
             event.preventDefault();
-
-            // $('.number-letter').off;
-            // $('.number-vowel-consonant').off;
 
             var word = $('input[name=string-to-transform]').val();
 
@@ -70,13 +65,11 @@
         });
 
         // Função: Contar String       
-        // 3) Cliente recebe a informação tratada e imprime na tela:
-        socket.on('counterMessage', function (tamPalavra) {
-            $('.result-box').append('<h1 class="string-counted">' + tamPalavra + ' letras</div>');
+        socket.on('countedMessage', function (wordSize) {
+            $('.result-box').append('<h1 class="string-counted">' + wordSize + ' letras</div>');
             $('.result-box').append(`<h1 class="reload-message">Deseja analisar outra String? Recarregue a página!</div>`);
         });
 
-        // 1) Cliente coleta e manda a informação pro Servidor
         $('#number-letter').click(function (event) {
             event.preventDefault();
 
@@ -87,13 +80,38 @@
                     word: word,
                 };
 
-                socket.emit('letterCounter', wordObject);
+                socket.emit('messageToCount', wordObject);
             };
 
             this.disabled = true;
             $('#number-letter').css("background", "#35a2d8");
             $('#invert-button').css("visibility", "hidden");
             $('#number-vowel-consonant').css("visibility", "hidden");
+        });
+
+        // Função: Contar Vogais e Consoantes       
+        socket.on('typedMessage', function (numbers) {
+            $('.result-box').append('<h1 class="string-counted">Vogais: ' + numbers.vowel + '<br>Consoantes: ' + numbers.consonant + '</div>');
+            $('.result-box').append(`<h1 class="reload-message">Deseja analisar outra String? Recarregue a página!</div>`);
+        });
+
+        $('#number-vowel-consonant').click(function (event) {
+            event.preventDefault();
+
+            word = $('input[name=string-to-transform]').val();
+
+            if (word.length) {
+                wordObject = {
+                    word: word,
+                };
+
+                socket.emit('messageToType', wordObject);
+            };
+
+            this.disabled = true;
+            $('#number-letter').css("visibility", "hidden");
+            $('#invert-button').css("visibility", "hidden");
+            $('#number-vowel-consonant').css("background", "#35a2d8");
         });
     </script>
 </body>

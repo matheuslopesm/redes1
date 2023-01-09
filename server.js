@@ -20,57 +20,58 @@ app.use('/', (req, res) => {
 });
 
 let messages;
-let palavraInvertida;
-// var tamPalavra;
-// const vogais = ["a", "e", "i", "o", "u"];
+let invertedWord;
+let wordSize;
+let messageWithoutSpace;
+let messageNormalized;
+const vowels = ["a", "e", "i", "o", "u"];
 
 io.on('connection', socket => {
     console.log(`Socket conectado: ${socket.id}`);
 
-    // 2) Servidor recebe a informação, trata e devolve pro Cliente: 
     socket.on('messageToInvert', data => {
         messages = JSON.stringify(data.word);
-        palavraInvertida = messages.split("").reverse().join("");
+        invertedWord = messages.split("").reverse().join("");
 
-        socket.emit('receivedMessage', palavraInvertida);
-    }); 
+        socket.emit('invertedMessage', invertedWord);
+    });
 
-    socket.on('letterCounter', data => {
+    socket.on('messageToCount', data => {
         messages = JSON.stringify(data.word);
-        tamPalavra = messages.length - 2;       
+        messageWithoutSpace = messages.replace(" ", "");
+        wordSize = messageWithoutSpace.length - 2;
 
-        socket.emit('counterMessage', tamPalavra);
-    }); 
+        socket.emit('countedMessage', wordSize);
+    });
 
-    //     socket.on('letterCounter', data => {
-    //     messages = JSON.stringify(data.message);
-    //     tamPalavra = messages.length - 2;
-    //     palavraInvertida = messages.split("").reverse().join("");
+    socket.on('messageToType', data => {
+        messages = JSON.stringify(data.word);
+        messageWithoutSpace = messages.replace(" ", "");
+        messageNormalized = messageWithoutSpace.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        wordSize = messageNormalized.length - 2;
 
-    //     function contaVogal(string) {
-    //         let count = 0;
+        function vowelCounter(string) {
+            let count = 0;
 
-    //         for (let letra of string.toLowerCase()) {
-    //             if (vogais.includes(letra)) {
-    //                 count++;
-    //             };
-    //         };
+            for (let letter of string.toLowerCase()) {
+                if (vowels.includes(letter)) {
+                    count++;
+                };
+            };
 
-    //         return count;
-    //     };
+            return count;
+        };
 
-    //     var numVogais = contaVogal(messages);
-    //     var numConsoantes = tamPalavra - numVogais;
+        var numVowel = vowelCounter(messageNormalized);
+        var numConsonant = wordSize - numVowel;
 
-    //     messages = {
-    //         palavraInvertida: palavraInvertida,
-    //         tamPalavra: tamPalavra,
-    //         numVogais: numVogais,
-    //         numConsoantes: numConsoantes,
-    //     };
+        var numbers = {
+            vowel: numVowel, 
+            consonant: numConsonant
+        };
 
-    //     socket.broadcast.emit('receivedMessage', messages.palavraInvertida);
-    // }); 
+        socket.emit('typedMessage', numbers);
+    });
 });
 
 server.listen(3000);
