@@ -29,7 +29,7 @@
         <input type="text" name="string-to-transform" placeholder="Digite sua String">
         <div class="content">
             <button id="invert-button">Inverter String</button>
-            <button id="number-letter">Número de Letras</button>
+            <button id="number-letter">Número de Caracteres</button>
             <button id="number-vowel-consonant">Vogais e Consoantes</button>
         </div>
         <h1 class="title">Resultado:</h1>
@@ -66,7 +66,7 @@
 
         // Função: Contar String       
         socket.on('countedMessage', function (wordSize) {
-            $('.result-box').append('<h1 class="string-counted">' + wordSize + ' letras</div>');
+            $('.result-box').append('<h1 class="string-counted">' + wordSize + ' caracteres</div>');
             $('.result-box').append(`<h1 class="reload-message">Deseja analisar outra String? Recarregue a página!</div>`);
         });
 

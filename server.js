@@ -25,6 +25,7 @@ let wordSize;
 let messageWithoutSpace;
 let messageNormalized;
 const vowels = ["a", "e", "i", "o", "u"];
+let consonants = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"];
 
 io.on('connection', socket => {
     console.log(`Socket conectado: ${socket.id}`);
@@ -51,23 +52,32 @@ io.on('connection', socket => {
         wordSize = messageNormalized.length - 2;
 
         function vowelCounter(string) {
-            let count = 0;
+            let countVowel = 0;
+            let countConsonant = 0;
 
             for (let letter of string.toLowerCase()) {
                 if (vowels.includes(letter)) {
-                    count++;
-                };
+                    countVowel++;
+                }else if (consonants.includes(letter)){
+                    countConsonant++;
+                }
             };
 
-            return count;
+            var typeObject = {
+                typeVowels: countVowel,
+                typeConsonants: countConsonant
+            }
+
+            return typeObject;
         };
 
-        var numVowel = vowelCounter(messageNormalized);
-        var numConsonant = wordSize - numVowel;
+        var types = vowelCounter(messageNormalized);
+
+        // var numConsonant = wordSize - numVowel;
 
         var numbers = {
-            vowel: numVowel, 
-            consonant: numConsonant
+            vowel: types.typeVowels,
+            consonant: types.typeConsonants
         };
 
         socket.emit('typedMessage', numbers);
