@@ -39,16 +39,19 @@
     <script type="text/javascript">
         var socket = io('http://localhost:3000');
 
-        socket.on('receivedMessage', function (word) {
-            renderMessage(word);
+        // Função: Inverter String
+        // 3) Cliente recebe a informação tratada e imprime na tela:
+        socket.on('receivedMessage', function (palavraInvertida) {
+            $('.result-box').append('<h1 class="string-inverted">' + palavraInvertida + '</div>');
+            $('.result-box').append(`<h1 class="reload-message">Deseja analisar outra String? Recarregue a página!</div>`);
         });
-          
-        function renderMessage(word) {
-            $('.result-box').append('<div class="string-transformed">' + word.word + '</div>');
-        };
 
+        // 1) Cliente coleta e manda a informação pro Servidor:
         $('#invert-button').click(function (event) {
             event.preventDefault();
+
+            // $('.number-letter').off;
+            // $('.number-vowel-consonant').off;
 
             var word = $('input[name=string-to-transform]').val();
 
@@ -57,12 +60,42 @@
                     word: word,
                 };
 
-                renderMessage(wordObject);
-                socket.emit('sendMessage', wordObject);
+                socket.emit('messageToInvert', wordObject);
             };
 
-            // CONFERIR O FLUXO DO RENDERMESSAGE ETC.
+            this.disabled = true;
+            $('#invert-button').css("background", "#35a2d8");
+            $('#number-letter').css("visibility", "hidden");
+            $('#number-vowel-consonant').css("visibility", "hidden");
+        });
+
+        // Função: Contar String       
+        // 3) Cliente recebe a informação tratada e imprime na tela:
+        socket.on('counterMessage', function (tamPalavra) {
+            $('.result-box').append('<h1 class="string-counted">' + tamPalavra + ' letras</div>');
+            $('.result-box').append(`<h1 class="reload-message">Deseja analisar outra String? Recarregue a página!</div>`);
+        });
+
+        // 1) Cliente coleta e manda a informação pro Servidor
+        $('#number-letter').click(function (event) {
+            event.preventDefault();
+
+            word = $('input[name=string-to-transform]').val();
+
+            if (word.length) {
+                wordObject = {
+                    word: word,
+                };
+
+                socket.emit('letterCounter', wordObject);
+            };
+
+            this.disabled = true;
+            $('#number-letter').css("background", "#35a2d8");
+            $('#invert-button').css("visibility", "hidden");
+            $('#number-vowel-consonant').css("visibility", "hidden");
         });
     </script>
 </body>
+
 </html>
